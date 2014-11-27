@@ -36,7 +36,7 @@ class UpdateStatus:
     static_text = "NUMBER OF CARS "
     top_color = None
 
-    def __init__(self, top_surface, TOP_SCREEN_COLOR):
+    def __init__(self, top_surface):
         self.top_surface = top_surface
         self.font = pygame.font.Font(None, self.font_size)
         text = self.font.render(GAME_START_MSG, 1, self.font_color)

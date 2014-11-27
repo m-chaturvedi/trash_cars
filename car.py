@@ -10,15 +10,6 @@ except ImportError, err:
     print "couldn't load module. %s" % (err)
     sys.exit(2)
 
-# Global Variables
-CAR_SPEED = 3
-CAR_BOUNDARIES = 5
-AI_CAR_FILE = 'ai_car.png'
-
-USER_CAR_FILE = 'user_car.png'
-USER_CAR_NUMBER = -1 # Should be negative
-USER_CAR_SPEED = 5
-
 
 class Car(pygame.sprite.Sprite) :
     """Cars that will move across the screen
@@ -80,7 +71,7 @@ class Car(pygame.sprite.Sprite) :
     def _is_user_car(self):
         return self.car_number == USER_CAR_NUMBER
 
-    # Refractor this
+    # TODO Refractor this
     def update(self):
         new_rect = self.rect.move(self._newpos)
         area_bottom = self.area.bottom + self.abs_offset_y
@@ -95,15 +86,11 @@ class Car(pygame.sprite.Sprite) :
             if not (self.rect.bottom <= area_bottom - CAR_BOUNDARIES):
                 self.rect = self.rect.move((0,-1))
 
-
-
-
     def random_movable_positions_y(self):
         half_car_y = self.rect.size[1]/2
         half_area_y = self.area.size[1]/2
         return random.randint( -half_area_y + half_car_y + CAR_BOUNDARIES,
                                half_area_y - half_car_y - CAR_BOUNDARIES)
-
 
     def check_collision(self, car_sprites):
         collided_sprites_list = pygame.sprite.spritecollide(self, car_sprites, False)

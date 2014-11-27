@@ -20,22 +20,6 @@ except ImportError, err:
     sys.exit(2)
 
 
-# To be transferred to a config file
-SCREEN_SIZE = (1200,512)
-TOP_SCREEN = ((0,0),(1200,128))
-# Arbit way to give subsurface coords. The first tuple gives the top-left point.
-# The second tuple gives the size.
-BOTTOM_SCREEN = ((0,128), (1200, 384))
-TOP_SCREEN_COLOR = webcolors.name_to_rgb("green")
-BOTTOM_SCREEN_COLOR = webcolors.name_to_rgb("yellow")
-CLOCK_TICKS = 60
-TIME_BETWEEN_CAR_CREATION_MS = 1600
-
-
-
-def fl():
-    pygame.display.flip()
-
 if __name__ == '__main__':
     pygame.init()
     pygame.time.set_timer(CAR_CREATION_EVENT, TIME_BETWEEN_CAR_CREATION_MS)
@@ -64,8 +48,7 @@ if __name__ == '__main__':
 
     pygame.display.flip()
 
-# TODO: Change after creating congfig file
-    status = utils.UpdateStatus(top_surface, TOP_SCREEN_COLOR)
+    status = utils.UpdateStatus(top_surface)
     screen.blit(full_surface, status.rect, status.rect)
 
     while True:
