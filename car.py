@@ -1,3 +1,5 @@
+###############################################i####################################
+###################################### car.py ######################################
 try:
     import pygame
     import pdb
@@ -14,8 +16,9 @@ except ImportError, err:
 class Car(pygame.sprite.Sprite) :
     """Cars that will move across the screen
     Returns: car object
-    Functions: update, calcnewpos
-    Attributes: area, speed, car_num, rect"""
+    Functions callable from outside: get_get_total_num_cars, remove_if_outside,
+    update, check_collision, move_up, move_down, set_still
+    """
 
     total_cars = 0
     collision_list = []
@@ -24,6 +27,7 @@ class Car(pygame.sprite.Sprite) :
         pygame.sprite.Sprite.__init__(self)
         self._newpos = (0,0)
         self.abs_offset_y = motion_surface.get_abs_offset()[1]
+        self.state = NO_MOVE
         if user_car:
             self._make_user_car(motion_surface)
             utils.logging.info("USER CAR CREATED, # %s", self.car_number)
@@ -43,8 +47,8 @@ class Car(pygame.sprite.Sprite) :
         self.speed = CAR_SPEED
         self.rect.midright = self.area.midright
         self.rect.x += motion_surface.get_abs_offset()[0]
-        self.rect.y += motion_surface.get_abs_offset()[1] + self.random_movable_positions_y()
-        self.update_motion_plan()
+        self.rect.y += motion_surface.get_abs_offset()[1] + self._random_movable_positions_y()
+        self._update_motion_plan()
 
     def _make_user_car(self, motion_surface):
         self.image, self.rect = utils.load_png(USER_CAR_FILE)
@@ -65,7 +69,7 @@ class Car(pygame.sprite.Sprite) :
         for car_sprite in car_sprites.sprites():
             if car_sprite.area.left  > car_sprite.rect.right +2:
                 utils.logging.info("CAR # %s OUT"% car_sprite.car_number)
-                car_sprite.remove()
+                # car_sprite.remove(car_sprites)
                 car_sprite.kill()
 
     def _is_user_car(self):
@@ -86,7 +90,7 @@ class Car(pygame.sprite.Sprite) :
             if not (self.rect.bottom <= area_bottom - CAR_BOUNDARIES):
                 self.rect = self.rect.move((0,-1))
 
-    def random_movable_positions_y(self):
+    def _random_movable_positions_y(self):
         half_car_y = self.rect.size[1]/2
         half_area_y = self.area.size[1]/2
         return random.randint( -half_area_y + half_car_y + CAR_BOUNDARIES,
@@ -102,7 +106,7 @@ class Car(pygame.sprite.Sprite) :
                 pygame.event.post(pygame.event.Event(CAR_COLLISION_EVENT))
                 utils.logging.info("CAR # %s COLLIDED" % collided_sprite.car_number)
 
-    def update_motion_plan(self):
+    def _update_motion_plan(self):
         # We're moving right to left
         dx = -self.speed
         dy = 0
@@ -111,12 +115,15 @@ class Car(pygame.sprite.Sprite) :
     def move_up(self):
         dx = 0
         dy = -self.speed
+        self.state = MOVE_UP
         self._newpos = (dx, dy)
 
     def move_down(self):
         dx = 0
         dy = +self.speed
+        self.state = MOVE_DOWN
         self._newpos = (dx, dy)
 
     def set_still(self):
         self._newpos = (0,0)
+        self.state = NO_MOVE
